@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 import Wrapper from '../components/Wrapper'
 import { useUser } from '@clerk/nextjs'
 import EmojiPicker from 'emoji-picker-react'
+import { addBudget } from '../actions'
+import Notification from '../components/Notification'
 
 
 const page = () => {
@@ -14,16 +16,56 @@ const page = () => {
     const [showEmojiPicker,setShowEmojiPicker] = useState<boolean>(false);
 
     const [selectedEmoji,setSelectedEmoji] = useState<string>("");
+    const [notification,setNotification] = useState<string>("");
+    const closeNotification = () => {
+        setNotification("")
+    }
 
     const handleEmodjiSelect = (emojiObject : {emoji : string}) =>{
         setSelectedEmoji(emojiObject.emoji)
         setShowEmojiPicker(false)
     }
 
+    const handleAddBudget = async  () =>{
+        try {
+            const amount = parseFloat(budgetAmont)
+
+            if(isNaN(amount) || amount <= 0){
+                  throw new Error("le montant doit être un nombre possitif");
+            }
+            await addBudget(
+                user?.primaryEmailAddress?.emailAddress as string,
+                budgetName,
+                amount,
+                selectedEmoji
+            )
+
+            const modal = document.getElementById("my_modal_3") as HTMLDialogElement
+
+            if(modal){
+                modal.close()
+            }
+
+            setNotification("Nouveau Budget créé avec succè.")
+            setBudgetName("")
+            setBudgetAmount("")
+            setSelectedEmoji("")
+            setShowEmojiPicker(false)
+            
+        } catch (error) {
+            setNotification(`Erreur : ${error}`)
+            
+        }
+    }
+
   return (
     <Wrapper>
+        {notification && (
+            <Notification message={notification} onclose={closeNotification}>
+            </Notification>
+        )}
       {/* You can open the modal using document.getElementById('ID').showModal() method */}
-        <button className="btn rounded" onClick={()=>(document.getElementById('my_modal_3') as HTMLDialogElement).showModal()}>Nouveau Budget</button>
+        <button className="btn rounded-full" onClick={()=>(document.getElementById('my_modal_3') as HTMLDialogElement).showModal()}>Nouveau Budget</button>
         <dialog id="my_modal_3" className="modal">
         <div className="modal-box">
             <form method="dialog">
@@ -46,7 +88,7 @@ const page = () => {
                 <input 
                 type="number"
                 value={budgetAmont}
-                placeholder='Nom du buget'
+                placeholder='Amount'
                 onChange={(e) => setBudgetAmount(e.target.value)}
                 className='input input-bordered mb-3'
                 required
@@ -69,7 +111,9 @@ const page = () => {
 
                
 
-                <button className='btn rounded-full'>
+                <button 
+                onClick={handleAddBudget}
+                className='btn rounded-full'>
                     Ajouter Budget
                 </button>
 
