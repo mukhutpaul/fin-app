@@ -4,8 +4,12 @@ import React, { useEffect, useState } from 'react'
 import Wrapper from '../components/Wrapper'
 import { useUser } from '@clerk/nextjs'
 import EmojiPicker from 'emoji-picker-react'
-import { addBudget } from '../actions'
+import { addBudget, getBudgetsByUser } from '../actions'
 import Notification from '../components/Notification'
+import { Budget } from '@/type'
+import Link from 'next/link'
+import BudgetItem from '../components/BudgetItem'
+
 
 
 const page = () => {
@@ -17,6 +21,7 @@ const page = () => {
 
     const [selectedEmoji,setSelectedEmoji] = useState<string>("");
     const [notification,setNotification] = useState<string>("");
+    const [budgets, setBudgets] = useState<Budget[]>([])
     const closeNotification = () => {
         setNotification("")
     }
@@ -57,6 +62,24 @@ const page = () => {
             
         }
     }
+
+    const fetchBudgets = async () => {
+        if(user?.primaryEmailAddress?.emailAddress){
+            try {
+                const userBudgets = await getBudgetsByUser(user?.primaryEmailAddress?.emailAddress)
+                setBudgets(userBudgets)
+
+                
+            } catch (error) {
+                setNotification(`Erreur lors de la récuperation des budgets: ${error}`)
+                
+            }
+        }
+    }
+
+    useEffect(() =>{
+        fetchBudgets()
+    },[user?.primaryEmailAddress?.emailAddress])
 
   return (
     <Wrapper>
@@ -120,6 +143,17 @@ const page = () => {
             </div>
         </div>
         </dialog>
+
+        <ul className='grid md:grid-cols-3 gap-4 py-4'>
+        { budgets.map((budget)=>(
+            <Link href={""} key={budget.id}>
+               <BudgetItem budget={budget}></BudgetItem>
+            </Link>
+        ))
+        
+        }
+
+        </ul>
     </Wrapper>
   )
 }
