@@ -1,5 +1,6 @@
 import React from "react"
 import Navbar from "./Navbar"
+import { ClerkProvider } from "@clerk/nextjs"
 
 type WrapperProps = {
     children : React.ReactNode
