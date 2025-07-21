@@ -30,6 +30,11 @@ const BudgetItem : React.FC<BudgetItemProps> = ({budget}) => {
             </div>
         </div>
 
+        <div className='text-xl font-bold tetx-accent'>
+           {budget.amount} $
+        </div>
+
+
     </div>
     </li>
   )
