@@ -9,6 +9,7 @@ import Notification from '../components/Notification'
 import { Budget } from '@/type'
 import Link from 'next/link'
 import BudgetItem from '../components/BudgetItem'
+import { Landmark } from 'lucide-react'
 
 
 
@@ -31,6 +32,21 @@ const page = () => {
         setShowEmojiPicker(false)
     }
 
+   
+    const fetchBudgets = async () => {
+        if(user?.primaryEmailAddress?.emailAddress){
+            try {
+                const userBudgets = await getBudgetsByUser(user?.primaryEmailAddress?.emailAddress)
+                setBudgets(userBudgets)
+
+                
+            } catch (error) {
+                setNotification(`Erreur lors de la récuperation des budgets: ${error}`)
+                
+            }
+        }
+    }
+
     const handleAddBudget = async  () =>{
         try {
             const amount = parseFloat(budgetAmont)
@@ -44,7 +60,7 @@ const page = () => {
                 amount,
                 selectedEmoji
             )
-
+            fetchBudgets()
             const modal = document.getElementById("my_modal_3") as HTMLDialogElement
 
             if(modal){
@@ -63,20 +79,6 @@ const page = () => {
         }
     }
 
-    const fetchBudgets = async () => {
-        if(user?.primaryEmailAddress?.emailAddress){
-            try {
-                const userBudgets = await getBudgetsByUser(user?.primaryEmailAddress?.emailAddress)
-                setBudgets(userBudgets)
-
-                
-            } catch (error) {
-                setNotification(`Erreur lors de la récuperation des budgets: ${error}`)
-                
-            }
-        }
-    }
-
     useEffect(() =>{
         fetchBudgets()
     },[user?.primaryEmailAddress?.emailAddress])
@@ -88,7 +90,10 @@ const page = () => {
             </Notification>
         )}
       {/* You can open the modal using document.getElementById('ID').showModal() method */}
-        <button className="btn rounded-full" onClick={()=>(document.getElementById('my_modal_3') as HTMLDialogElement).showModal()}>Nouveau Budget</button>
+        <button className="btn rounded-full" onClick={()=>(document.getElementById('my_modal_3') as HTMLDialogElement).showModal()}>
+            Nouveau Budget
+            <Landmark className='w-4'/>
+            </button>
         <dialog id="my_modal_3" className="modal">
         <div className="modal-box">
             <form method="dialog">
@@ -105,7 +110,7 @@ const page = () => {
                 value={budgetName}
                 placeholder='Nom du buget'
                 onChange={(e) => setBudgetName(e.target.value)}
-                className='input input-bordered mb-3'
+                className='input input-bordered mb-3 w-full rounded-full'
                 required
                  />
                 <input 
@@ -113,7 +118,7 @@ const page = () => {
                 value={budgetAmont}
                 placeholder='Amount'
                 onChange={(e) => setBudgetAmount(e.target.value)}
-                className='input input-bordered mb-3'
+                className='input input-bordered mb-3 w-full rounded-full'
                 required
                 />
 
@@ -147,7 +152,7 @@ const page = () => {
         <ul className='grid md:grid-cols-3 gap-4 py-4'>
         { budgets.map((budget)=>(
             <Link href={""} key={budget.id}>
-               <BudgetItem budget={budget}></BudgetItem>
+               <BudgetItem budget={budget} enableHover={1}></BudgetItem>
             </Link>
         ))
         
