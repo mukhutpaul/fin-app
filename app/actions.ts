@@ -110,3 +110,58 @@ export async function getTransactionsByBudgetId(budgetId:string){
      }
 
 }
+
+export async function addTransactionsToBudget(
+    budgetId:string,
+    amount: number,
+    description: string
+){
+    try {
+
+        const budget = await prisma.budget.findUnique({
+            where : {
+                id : budgetId
+            },
+            include : {
+                transactions: true
+            }
+        })
+
+        if(!budget){
+            throw new Error("Budget non trouvé.")
+        }
+
+        const totalTransactons = budget.transactions.reduce((sum,transaction) => {
+                return sum + transaction.amount
+        },0)
+
+        const totalWithNewTransaction = totalTransactons + amount
+
+        if(totalWithNewTransaction > budget.amount){
+            throw new Error('Le montant total des transactions dépasses le montant du budget.');
+        }
+
+        const newTransaction = await prisma.transaction.create({
+            data : {
+                amount,
+                description,
+                emoji : budget.emoji,
+                budget : {
+                    connect : {
+                        id : budget.id,
+                    }
+
+                }
+            }
+
+
+        })
+
+        
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de la transaction:",error);
+        throw error
+        
+    }
+    
+}
