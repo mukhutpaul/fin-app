@@ -1,11 +1,12 @@
 "use client"
-import {addTransactionsToBudget, getTransactionsByBudgetId } from '@/app/actions'
+import {addTransactionsToBudget, deleteBudget, deleteTransaction, getTransactionsByBudgetId } from '@/app/actions'
 import BudgetItem from '@/app/components/BudgetItem'
 import Notification from '@/app/components/Notification'
 import Wrapper from '@/app/components/Wrapper'
 import budgets from '@/data'
 import { Budget } from '@/type'
-import { Send } from 'lucide-react'
+import { Send, Trash } from 'lucide-react'
+import { redirect } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 const page = ({params} : {params: Promise<{budgetId : string}>}) => {
@@ -76,6 +77,38 @@ async function  fetchBudgetData(budgetId : string){
        }
     }
 
+  const handleDeleteBudget = async () => {
+    const confirmed = window.confirm(
+      "Etes-vous sûr de vouloir supprimer ce budget et toutes ses transactions associées ?"
+    )
+
+    if(confirmed){
+      try {
+        await deleteBudget(budgetId)
+      } catch (error) {
+        
+      }
+      redirect("/budgets")
+    }
+  } 
+
+  const handleDeleteTransaction = async (transactionId:string) =>{
+    const confirmed = window.confirm(
+      "Etes-vous sûr de vouloir supprimer ce budget et toutes ses transactions associées ?"
+    )
+
+    if(confirmed){
+      try {
+        await deleteTransaction(transactionId)
+        fetchBudgetData(budgetId)
+        setNotification("Dépense suprimée")
+      } catch (error) {
+        
+      }
+      // redirect("/budgets")
+    }
+  } 
+
   return (
     <Wrapper>
      {notification && (
@@ -87,7 +120,9 @@ async function  fetchBudgetData(budgetId : string){
         <div className='flex md:flex-row flex-col'>
           <div className='md:w-1/3'>
             <BudgetItem budget={budget} enableHover={0} />
-            <button className="btn mt-4 rounded-full">Supprimer le budget</button>
+            <button
+            onClick={() =>handleDeleteBudget()}
+             className="btn mt-4 rounded-full">Supprimer le budget</button>
 
             <div className='space-y-4 flex flex-col mt-4'>
                 <input 
@@ -139,14 +174,28 @@ async function  fetchBudgetData(budgetId : string){
                       {budget.transactions.map((transaction) => (
                       <tr key={transaction.id}>
                         <td className='text-lg md:text-3xl'>{transaction.emoji}</td>
+                        <td>{transaction.description}</td>
                         <td>
                           <div className='badge badge-accent badge-xs md:badge-sm'>
                             -{transaction.amount} $
                           </div>
                         </td>
-                        <td>{transaction.description}</td>
-                        <td>Quality Control Specialist</td>
-                        <td>Blue</td>
+                         <td>{transaction.createdAt.toLocaleDateString("fr-FR")}</td>
+                        <td>{transaction.createdAt.toLocaleTimeString("fr-FR",
+                          {
+                            hour : "2-digit",
+                            minute: "2-digit",
+                            second : "2-digit"
+                         }
+                        )}</td>
+                        <td>
+                          <button
+                          onClick={() => handleDeleteTransaction(transaction.id)}
+                           className='btn btn-sm rounded-full'>
+                              <Trash className='w-4' />
+                          </button>
+                        </td>
+                      
                       </tr>
                       ))}
                      
