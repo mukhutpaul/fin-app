@@ -121,13 +121,43 @@ async function  fetchBudgetData(budgetId : string){
           </div>
 
           {budget?.transactions && budget.transactions.length>0 ?(
-            <div>
-
-            </div>
+              <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 md:mt-0 mt-4 md:w-2/3 ml-4">
+                  <table className="table">
+                    {/* head */}
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>Montant</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* row 1 */}
+                      {budget.transactions.map((transaction) => (
+                      <tr key={transaction.id}>
+                        <td className='text-lg md:text-3xl'>{transaction.emoji}</td>
+                        <td>
+                          <div className='badge badge-accent badge-xs md:badge-sm'>
+                            -{transaction.amount} $
+                          </div>
+                        </td>
+                        <td>{transaction.description}</td>
+                        <td>Quality Control Specialist</td>
+                        <td>Blue</td>
+                      </tr>
+                      ))}
+                     
+                    
+                    </tbody>
+                  </table>
+                </div>
           ):(
             <div className='md:w-2/3 mt-10 md:ml-4 flex items-center justify-center'>
               <Send className='w-8 h-8 text-accent b' strokeWidth={1.5}/>
-                 <span>Aucune transaction.</span>
+                 <span className='text-gray-500 ml-2'>Aucune transaction.</span>
             </div>
 
           )}
