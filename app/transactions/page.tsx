@@ -40,6 +40,7 @@ const page = () => {
             <select
             className='input input-bordered input-md rounded-full'
             defaultValue="last30"
+            onChange={(e) => fetchTransactions(e.target.value)}
             >
                 <option value="last7">Derniers 7 jours</option>
                 <option value="last30">Derniers 30 jours</option>

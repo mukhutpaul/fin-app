@@ -12,7 +12,7 @@ const TransactionItem : React.FC<TransactionItemProps> = ({transaction}) => {
     <li key={transaction.id} className='flex justify-between items-center'>
         <div className='my-4'>
             <button className='btn rounded-full'>
-                <div className='badge badge-accent'>- {transaction.amount}
+                <div className='badge badge-accent'>- {transaction.amount} $
                 </div>
                 {transaction.budgetName}
             </button>
