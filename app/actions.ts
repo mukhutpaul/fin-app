@@ -282,3 +282,32 @@ export async function getTransactionsByEmailAndPeriod(email: string, period: str
     }
 }
 
+//dashboard
+
+export async function getTotalTransactionAmount(email: string){
+    try {
+        const user = await prisma.user.findUnique({
+            where : {email},
+            include : {
+                budgets : {
+                    include : {
+                        transactions : true
+                    }
+                }
+            }
+        })
+        
+        if(!user) throw new Error("Utilisateur non trouvé.");
+
+        const totalAmount = user.budgets.reduce((sum,budget) => {
+            return sum + budget.transactions.reduce((budgetSum, transaction) => budgetSum + transaction.amount,0)
+        },0)
+
+        return totalAmount
+    } catch (error) {
+        console.error("Erreur lors du calcul du montant total des transactions:",error)
+        throw error;
+        
+    }
+}
+

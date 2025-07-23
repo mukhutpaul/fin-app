@@ -29,7 +29,7 @@ const Navbar = () => {
                     className='btn rounded-full'
                     >Mes budgets
                     </Link>
-                    <Link href={""}
+                    <Link href={"/dashboard"}
                     className='btn mx-4 rounded-full'
                     >Tableau de bord
                     </Link>
@@ -46,7 +46,7 @@ const Navbar = () => {
                     className='btn rounded-full btn-sm'
                     >Mes budgets
                     </Link>
-                    <Link href={""}
+                    <Link href={"/dashboard"}
                     className='btn mx-4 rounded-full btn-sm'
                     >Tableau de bord
                     </Link>
