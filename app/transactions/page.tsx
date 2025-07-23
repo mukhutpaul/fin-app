@@ -35,6 +35,21 @@ const page = () => {
     },[user?.primaryEmailAddress?.emailAddress])
   return (
     <Wrapper>
+         
+         <div className='flex justify-end mb-5 rounded-full'>
+            <select
+            className='input input-bordered input-md rounded-full'
+            defaultValue="last30"
+            >
+                <option value="last7">Derniers 7 jours</option>
+                <option value="last30">Derniers 30 jours</option>
+                <option value="last90">Derniers 90 jours</option>
+                <option value="last365">Derniers 365 jours</option>
+
+            </select>
+         </div>
+
+
         <div className="overflow-x-auto w-full bg-base-200/35 rounded-xl p-5">
         {loading ? (
         <div className='flex justify-center items-center'>
