@@ -16,7 +16,7 @@ const BudgetItem : React.FC<BudgetItemProps> = ({budget,enableHover}) => {
 
     const progresValue = totalTransactionAmount > budget.amount
     ? 100 :
-    (totalTransactionAmount / budget.amount) / 100
+    (totalTransactionAmount / budget.amount) * 100
     
     const hoverClasse = enableHover === 1 ? "hover:shodow-xl hover:border-accent":"";
     return (

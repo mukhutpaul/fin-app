@@ -33,7 +33,7 @@ const Navbar = () => {
                     className='btn mx-4 rounded-full'
                     >Tableau de bord
                     </Link>
-                    <Link href={""}
+                    <Link href={"/transactions"}
                     className='btn rounded-full'
                     >Mes transactions
                     </Link>
@@ -50,7 +50,7 @@ const Navbar = () => {
                     className='btn mx-4 rounded-full btn-sm'
                     >Tableau de bord
                     </Link>
-                    <Link href={""}
+                    <Link href={"/transactions"}
                     className='btn rounded-full btn-sm'
                     >Mes transactions
                     </Link>
