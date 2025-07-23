@@ -6,11 +6,12 @@ import React, { useEffect, useState } from 'react'
 
 import Wrapper from '../components/Wrapper'
 import { getTransactionsByEmailAndPeriod } from '../actions'
+import TransactionItem from '../components/TransactionItem'
 
 const page = () => {
 
     const {user} = useUser()
-    const [transaction,setTransaction] = useState<Transaction[]>([])
+    const [transactions,setTransactions] = useState<Transaction[]>([])
     const [loading,setLoading] = useState<boolean>(false)
 
     const fetchTransactions = async(period:string) => {
@@ -19,7 +20,7 @@ const page = () => {
             try {
 
                 const transactionData = await getTransactionsByEmailAndPeriod(user?.primaryEmailAddress?.emailAddress,period)
-                setTransaction(transactionData)
+                setTransactions(transactionData)
                 setLoading(false)
             } catch (error) {
                 console.error("Erreur lors de la transaction:",error)
@@ -34,15 +35,29 @@ const page = () => {
     },[user?.primaryEmailAddress?.emailAddress])
   return (
     <Wrapper>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto w-full bg-base-200/35 rounded-xl p-5">
         {loading ? (
         <div className='flex justify-center items-center'>
-          <span className="loading loading-ring loading-md"></span>
+            <span className="loading loading-ring loading-xs"></span>
+            <span className="loading loading-ring loading-sm"></span>
+            <span className="loading loading-ring loading-md"></span>
+            <span className="loading loading-ring loading-lg"></span>
+            <span className="loading loading-ring loading-xl"></span>
         </div>
-        ): transaction.length === 0 ?(
-           <div></div>
+        ): transactions.length === 0 ?(
+           <div className='flex justify-center items-center h-full'>
+            <span className='text-gray-500 text-sm'>Aucune transaction à afficher.</span>
+           </div>
         ):(
-            <div></div>
+            <ul className='divide-y divide-base-300'>
+                 {transactions.map((transaction) => (
+                    <TransactionItem 
+                    key={transaction.id}  
+                    transaction={transaction} >
+
+                    </TransactionItem>
+                 ))}
+            </ul>
         )}
         </div>
     </Wrapper>
