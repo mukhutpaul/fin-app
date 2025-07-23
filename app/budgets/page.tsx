@@ -13,6 +13,7 @@ import { Landmark } from 'lucide-react'
 
 
 
+
 const page = () => {
     const {user} = useUser()
     const [budgetName,setBudgetName] = useState<string>("")
@@ -23,6 +24,7 @@ const page = () => {
     const [selectedEmoji,setSelectedEmoji] = useState<string>("");
     const [notification,setNotification] = useState<string>("");
     const [budgets, setBudgets] = useState<Budget[]>([])
+    const [isloading,setIsLoading] = useState(true)
     const closeNotification = () => {
         setNotification("")
     }
@@ -38,6 +40,7 @@ const page = () => {
             try {
                 const userBudgets = await getBudgetsByUser(user?.primaryEmailAddress?.emailAddress)
                 setBudgets(userBudgets)
+                setIsLoading(false)
 
                 
             } catch (error) {
@@ -148,7 +151,15 @@ const page = () => {
             </div>
         </div>
         </dialog>
-
+        {isloading ?(
+       <div className='flex justify-center items-center'>
+        <span className="loading loading-ring loading-xs"></span>
+        <span className="loading loading-ring loading-sm"></span>
+        <span className="loading loading-ring loading-md"></span>
+        <span className="loading loading-ring loading-lg"></span>
+        <span className="loading loading-ring loading-xl"></span>
+       </div>
+    ): (
         <ul className='grid md:grid-cols-3 gap-4 py-4'>
         { budgets.map((budget)=>(
             <Link href={`/manage/${budget.id}`} key={budget.id}>
@@ -159,6 +170,7 @@ const page = () => {
         }
 
         </ul>
+    )}
     </Wrapper>
   )
 }
