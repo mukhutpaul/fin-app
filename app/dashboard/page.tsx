@@ -1,15 +1,17 @@
 "use client"
 import { useUser } from '@clerk/nextjs'
 import React, { useEffect, useState } from 'react'
-import { getTotalTransactionAmount } from '../actions';
+import { getReachedBudgets, getTotalTransactionAmount, getTotalTransactionCount } from '../actions';
 import Wrapper from '../components/Wrapper';
-import { CircleDollarSign } from 'lucide-react';
+import { CircleDollarSign, Landmark, PiggyBank } from 'lucide-react';
 
 const page = () => {
 
     const {user} = useUser();
     const [totalAmount,setTotalAmount] = useState<number | null>(null)
     const [isloading,setIsLoading] = useState(true)
+    const [totalCount,setTotalCount] = useState<number | null>(null)
+    const [reachedBudgetsRatio, setReachedBudgetsRatio] = useState<string | null>(null)
     
     
     const fetchData = async () => {
@@ -19,9 +21,13 @@ const page = () => {
             const email = user?.primaryEmailAddress?.emailAddress as string
             
             if(email){
+                const count = await getTotalTransactionCount(email)
                 const amout = await getTotalTransactionAmount(email)
+                const recheadBudget = await getReachedBudgets(email)
                 setTotalAmount(amout)
-                setIsLoading(false)
+                setTotalCount(count)
+                setReachedBudgetsRatio(recheadBudget)
+                setIsLoading(false) 
 
             }
             
@@ -69,13 +75,13 @@ const page = () => {
                 items-center rounded-xl'>
                 
                 <div className='flex flex-col'>
-                    <span className='text-gray-500 text-sm'>Total des transactions</span>
+                    <span className='text-gray-500 text-sm'>Nombre des transactions</span>
                     <span className='text-2xl font-bold text-accent'>
-                        {totalAmount !== null ? `${totalAmount} $`: 'N/A'}
+                        {totalCount !== null ? `${totalCount}`: 'N/A'}
                     </span>
                 </div>
 
-                <CircleDollarSign className='bg-accent h-9 w-9 rounded-full p-1 text-white'/>
+                <PiggyBank className='bg-accent h-9 w-9 rounded-full p-1 text-white'/>
 
             </div>
 
@@ -83,19 +89,41 @@ const page = () => {
                 items-center rounded-xl'>
                 
                 <div className='flex flex-col'>
-                    <span className='text-gray-500 text-sm'>Total des transactions</span>
+                    <span className='text-gray-500 text-sm'>Budgets atteints</span>
                     <span className='text-2xl font-bold text-accent'>
-                        {totalAmount !== null ? `${totalAmount} $`: 'N/A'}
+                        {reachedBudgetsRatio || 'N/A'}
                     </span>
                 </div>
 
-                <CircleDollarSign className='bg-accent h-9 w-9 rounded-full p-1 text-white'/>
-
-            </div>
+                <Landmark className='bg-accent h-9 w-9 rounded-full p-1 text-white'/>
 
             </div>
 
         </div>
+
+        <div className='w-full md:flex mt-4'>
+            <div className='rounded-xl md:w-2/3'>
+                 <div>
+                    <BarChart width={730} height={250} data={data}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="pv" fill="#8884d8" />
+                    <Bar dataKey="uv" fill="#82ca9d" />
+                    </BarChart>
+                 </div>
+
+            </div>
+
+            <div className='rounded-xl md:w-1/3 ml-4'>
+
+            </div>
+
+        </div>
+
+    </div>
     )}
     </Wrapper>
   )
